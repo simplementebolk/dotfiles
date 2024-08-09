@@ -1,17 +1,22 @@
 [colors]
-background = #222
+background = #1c1c1c
 background-alt = #333
-foreground = #dfdfdf
-foreground-alt = #888
-primary = #ffb52a
+
+foreground = #d8dee9
+foreground-alt = #4c566a
+
+primary = #88c0d0
 secondary = #e60053
-alert = #bd2c40
+alert = #d08770
+
+debian = #d70a53
+
 
 [bar/bar1]
-width = 100%
-height = 30
+width = 99%
+height = 35
 radius = 6.0
-fixed-center = false
+fixed-center = true
 
 background = ${colors.background}
 foreground = ${colors.foreground}
@@ -22,25 +27,32 @@ line-color = ${colors.background}
 border-size = 1
 border-color = ${colors.background}
 
-padding-left = 0
+padding-left = 2
 padding-right = 2
 
 module-margin-left = 1
 module-margin-right = 1
 
-font-0 = fixed:pixelsize=12;1
-font-1 = unifont:fontformat=truetype:size=10:antialias=false;0
-font-2 = siji:pixelsize=12;1
+font-0 = Fira Code Nerd Font:pixelsize=17;1
+font-1 = Noto Sans CJK SC:pixelsize=16;1
+font-2 = Fira Code:pixelsize=12;1
 
-modules-left = bspwm
+modules-left = debian-logo bspwm spotify
 modules-center = cpu memory
-modules-right = battery volume wlan date powermenu
-
-tray-position = right
-tray-padding = 2
+modules-right = battery volume bluetooth wifi-custom date
 
 cursor-click = pointer
 cursor-scroll = ns-resize
+
+offset-x = 10
+offset-y = 20
+
+[module/debian-logo]
+type = custom/text
+content = 󰣚
+content-foreground = ${colors.debian}
+click-left = betterlockscreen -l
+
 
 [module/volume]
 type = internal/alsa
@@ -49,22 +61,8 @@ format-volume-foreground = ${colors.foreground}
 format-muted = <label-muted>
 format-muted-foreground = ${colors.foreground-alt}
 
-label-volume = VOL: %percentage:2%% 
-label-muted = MUTE
-
-bar-width = 10
-bar-indicator = |
-bar-indicator-foreground = ${colors.foreground}
-bar-fill = ░
-bar-fill-font = 2
-bar-fill-foreground = ${colors.primary}
-bar-empty = ░
-bar-empty-font = 2
-bar-empty-foreground = ${colors.foreground-alt}
-
-icon-muted = 🔇
-icon-volume = 🔊
-
+label-volume = : %percentage:2%% 
+label-muted = : Mute
 
 [module/bspwm]
 type = internal/bspwm
@@ -73,29 +71,38 @@ format = <label-state> <label-mode>
 
 label-focused = %{T3}%name%%{T-}
 label-focused-foreground = ${colors.primary}
-label-focused-padding = 2
+label-focused-padding = 1
 
 label-occupied = %{T3}%name%%{T-}
 label-occupied-foreground = ${colors.foreground}
-label-occupied-padding = 2
+label-occupied-padding = 1
 
 label-urgent = %{T3}%name%!%{T-}
 label-urgent-foreground = ${colors.alert}
-label-urgent-padding = 2
+label-urgent-padding = 1
 
 label-empty = %{T3}%name%%{T-}
 label-empty-foreground = ${colors.foreground-alt}
-label-empty-padding = 2
+label-empty-padding = 1
+
+[module/spotify]
+type = custom/script
+exec = ~/.config/polybar/scripts/spotify.sh
+interval = 5
+format-prefix = "  "
+format-prefix-foreground = ${colors.foreground}
+format-underline = ${colors.primary}
+label = %output%
 
 [module/mpd]
 type = internal/mpd
 format-online = <label-song> <icon-prev> <icon-stop> <toggle> <icon-next>
 
-icon-prev = 
-icon-stop = 
-icon-play = 
-icon-pause = 
-icon-next = 
+icon-prev = 󰒮
+icon-stop = 󰓛
+icon-play = 󰐊
+icon-pause = 󰏤
+icon-next = 󰼧
 
 label-song-maxlen = 25
 label-song-ellipsis = true
@@ -105,7 +112,7 @@ type = internal/fs
 interval = 25
 
 mount-0 = /
-label-mounted = %mountpoint%: %percentage_used%%
+label-mounted = : %percentage_used%%
 label-unmounted = %mountpoint% not mounted
 label-unmounted-foreground = ${colors.foreground-alt}
 
@@ -130,14 +137,14 @@ type = internal/cpu
 interval = 2
 format-prefix = " "
 format-prefix-foreground = ${colors.foreground-alt}
-label = CPU: %percentage:2%%
+label = : %percentage:2%%
 
 [module/memory]
 type = internal/memory
 interval = 2
 format-prefix = " "
 format-prefix-foreground = ${colors.foreground-alt}
-label = RAM: %percentage_used%%
+label = : %percentage_used%%
 
 [module/wlan]
 type = internal/network
@@ -146,14 +153,33 @@ interval = 3.0
 
 format-connected = <ramp-signal> <label-connected>
 format-connected-underline = ${colors.primary}
-label-connected = Wi-Fi: %essid%
+label-connected = %essid%
 
-ramp-signal-0 = 
-ramp-signal-1 = 
-ramp-signal-2 = 
-ramp-signal-3 = 
-ramp-signal-4 = 
-ramp-signal-foreground = ${colors.foreground-alt}
+ramp-signal-0 = 󰤯
+ramp-signal-1 = 󰤟
+ramp-signal-2 = 󰤢
+ramp-signal-3 = 󰤥
+ramp-signal-4 = 󰤨
+ramp-signal-foreground = ${colors.foreground}
+
+[module/wifi-custom]
+type = custom/script
+exec = "~/.config/bspwm/scripts/wifi_status.sh"
+interval = 3.0
+label = %output%
+click-left = "~/.config/bspwm/scripts/rofi-wifi-menu.sh"
+
+
+[module/bluetooth]
+type = custom/script
+exec = ~/.config/bspwm/scripts/rofi-bluetooth.sh --status
+interval = 10
+format-prefix = ""
+format-prefix-foreground = ${colors.foreground}
+format-underline = ${colors.primary}
+label = %output%
+
+click-left = ~/.config/bspwm/scripts/rofi-bluetooth.sh
 
 [module/eth]
 type = internal/network
@@ -163,80 +189,30 @@ interval = 3.0
 format-connected = <label-connected>
 format-connected-foreground = ${colors.foreground}
 label-connected = Ethernet: %local_ip%
+click-left = ~/.config/bspwm/scripts/rofi-wifi-menu.sh 
 
 [module/battery]
-type = internal/battery
-battery = BAT0
-adapter = AC
-full-at = 98
-
-format-charging = <animation-charging> <label-charging>
-format-charging-underline = ${colors.primary}
-
-format-discharging = <animation-discharging> <label-discharging>
-format-discharging-underline = ${colors.primary}
-
-format-full-prefix = "BAT0  "
-format-full-prefix-foreground = ${colors.foreground-alt}
-
-ramp-capacity-0 = 
-ramp-capacity-1 = 
-ramp-capacity-2 = 
-ramp-capacity-foreground = ${colors.foreground-alt}
-
-animation-charging-0 = 
-animation-charging-1 = 
-animation-charging-2 = 
-animation-charging-foreground = ${colors.foreground-alt}
-animation-charging-framerate = 750
-
-animation-discharging-0 = 
-animation-discharging-1 = 
-animation-discharging-2 = 
-animation-discharging-foreground = ${colors.foreground-alt}
-animation-discharging-framerate = 750
+type = custom/script
+exec = ~/.config/polybar/scripts/battery.sh
+interval = 0
+format-prefix = ""
+format-prefix-foreground = ${colors.foreground}
+format-underline = ${colors.primary}
+label = %output%
 
 [module/date]
 type = internal/date
 interval = 5
 
-date = %Y-%m-%d
+date = %d/%m/%Y
 time = %H:%M
 
 format-prefix = 
 format-prefix-foreground = ${colors.foreground-alt}
 format-underline = ${colors.primary}
 
-label = Date: %date% Time: %time%
+label = : %date%  %time%
 
-[module/powermenu]
-type = custom/menu
-
-expand-right = true
-
-format-spacing = 1
-
-label-open = 
-label-open-foreground = ${colors.secondary}
-label-close =  cancel
-label-close-foreground = ${colors.secondary}
-label-separator = |
-label-separator-foreground = ${colors.foreground-alt}
-
-menu-0-0 = reboot
-menu-0-0-exec = menu-open-1
-menu-0-1 = power off
-menu-0-1-exec = menu-open-2
-
-menu-1-0 = cancel
-menu-1-0-exec = menu-open-0
-menu-1-1 = reboot
-menu-1-1-exec = sudo reboot
-
-menu-2-0 = power off
-menu-2-0-exec = sudo poweroff
-menu-2-1 = cancel
-menu-2-1-exec = menu-open-0
 
 [settings]
 screenchange-reload = true
