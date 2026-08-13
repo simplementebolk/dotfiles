@@ -10,7 +10,8 @@ Mis archivos de configuración (*dotfiles*) para un entorno minimalista, fluido 
 
 ## 📸 Vista Previa (Screenshots)
 
-![Desktop Preview]<img width="3840" height="1080" alt="2026-08-12-211251" src="https://github.com/user-attachments/assets/d7898b77-6341-451e-bfd9-2c7aa30c64ad" />
+![Desktop Preview]<img width="3840" height="1080" alt="2026-08-12-212331" src="https://github.com/user-attachments/assets/15cfcea8-09d7-4eb7-a2ef-635d9c6dc67e" />
+
 
 
 ---
