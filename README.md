@@ -10,7 +10,8 @@ Mis archivos de configuración (*dotfiles*) para un entorno minimalista, fluido 
 
 ## 📸 Vista Previa (Screenshots)
 
-![Desktop Preview](https://via.placeholder.com/1200x600?text=Agrega+aqui+una+captura+de+tu+escritorio)
+![Desktop Preview]<img width="3840" height="1080" alt="2026-08-12-211251" src="https://github.com/user-attachments/assets/d7898b77-6341-451e-bfd9-2c7aa30c64ad" />
+
 
 ---
 
