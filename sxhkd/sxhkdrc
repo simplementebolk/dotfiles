@@ -149,12 +149,28 @@ F6
 	brightnessctl set +5%
 
 # Tomar captura de pantalla completa
-Print
-    scrot '%Y-%m-%d-%H%M%S.png' -e 'mv $f ~/Pictures/'
+#Print
+#    scrot '%Y-%m-%d-%H%M%S.png' -e 'mv $f ~/Pictures/'
 
 # Tomar captura de pantalla de una región seleccionada
+#Shift + Print
+#    scrot -s '%Y-%m-%d-%H%M%S.png' -e 'mv $f ~/Pictures/'
+
+# Capturar solo el monitor activo con editor
+Print
+    ksnip -m
+
+# Capturar una región seleccionada a mano
 Shift + Print
-    scrot -s '%Y-%m-%d-%H%M%S.png' -e 'mv $f ~/Pictures/'
+    ksnip -r
+
 
 # lockscreen
 
+# Mover el foco al monitor anterior / siguiente (Super + coma / punto)
+super + {comma,period}
+    bspc monitor -f {prev,next}
+
+# Mover la ventana activa al otro monitor y seguirla
+super + shift + {comma,period}
+    bspc node -m {prev,next} --follow
