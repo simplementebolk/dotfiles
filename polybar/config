@@ -13,6 +13,7 @@ debian = #d70a53
 
 
 [bar/bar1]
+monitor = ${env:MONITOR:}
 width = 99%
 height = 35
 radius = 6.0
@@ -33,13 +34,13 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 1
 
-font-0 = Fira Code Nerd Font:pixelsize=17;1
+font-0 = FiraCode Nerd Font:pixelsize=17;1
 font-1 = Noto Sans CJK SC:pixelsize=16;1
 font-2 = Fira Code:pixelsize=12;1
 
 modules-left = debian-logo bspwm spotify
 modules-center = cpu memory
-modules-right = battery volume bluetooth wifi-custom date
+modules-right = volume bluetooth wifi-custom date
 
 cursor-click = pointer
 cursor-scroll = ns-resize
@@ -47,12 +48,14 @@ cursor-scroll = ns-resize
 offset-x = 10
 offset-y = 20
 
+wm-restack = bspwm
+override-redirect = false
+
 [module/debian-logo]
 type = custom/text
 content = 󰣚
 content-foreground = ${colors.debian}
 click-left = betterlockscreen -l
-
 
 [module/volume]
 type = internal/alsa
@@ -61,11 +64,15 @@ format-volume-foreground = ${colors.foreground}
 format-muted = <label-muted>
 format-muted-foreground = ${colors.foreground-alt}
 
-label-volume = : %percentage:2%% 
+label-volume = : %percentage:2%%
 label-muted = : Mute
+
+# Llama a Rofi al hacer clic izquierdo
+click-left = ~/.config/polybar/scripts/rofi-audio.sh
 
 [module/bspwm]
 type = internal/bspwm
+pin-workspaces = true
 
 format = <label-state> <label-mode>
 
