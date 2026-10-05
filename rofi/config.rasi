@@ -1,63 +1,116 @@
 configuration {
-    modi: "drun,run,ssh";
+    modi: "drun,run,window";
     show-icons: true;
+    icon-theme: "Adwaita";
+    font: "FiraCode Nerd Font Medium 12";
+    display-drun: "  Apps";
+    display-run: "  Run";
+    display-window: "  Ventanas";
+    drun-display-format: "{name}";
+}
+
+/* ── Catppuccin Mocha ───────────────────────────── */
+* {
+    bg:       #1e1e2ef0;
+    bg-alt:   #313244;
+    surface:  #45475a;
+    fg:       #cdd6f4;
+    fg-dim:   #6c7086;
+    accent:   #cba6f7;
+    pink:     #f5c2e7;
+    urgent:   #f38ba8;
+
+    background-color: transparent;
+    text-color:       @fg;
+    margin:  0;
+    padding: 0;
+    spacing: 0;
 }
 
 window {
+    location: center;
+    width: 640px;
     border: 2px;
-    border-color: #44475a;
-    border-radius: 15px;
-    padding: 20px;
-    background-color: #282a36;
+    border-color: @accent;
+    border-radius: 14px;
+    background-color: @bg;
 }
 
 mainbox {
-    border-radius: 15px;
-    padding: 10px 0 0 0;
-}
-
-listview {
-    fixed-height: 40px;
-    lines: 10;
-    padding: 5px 0 0 0;
-    spacing: 5px;
-    scrollbar: true;
-}
-
-element {
-    border: 0;
-    border-radius: 10px;
-    padding: 5px;
-    background-color: #44475a;
-    text-color: #f8f8f2;
-}
-
-element selected {
-    background-color: #6272a4;
-    text-color: #f8f8f2;
+    padding: 18px;
+    spacing: 14px;
 }
 
 inputbar {
-    children: [entry];
-}
-
-entry {
-    padding: 5px;
-    placeholder: "Search...";
-    border: 2px;
-    border-color: #f8f8f2;
+    padding: 10px 14px;
+    spacing: 10px;
     border-radius: 10px;
-    background-color: #282a36;
-    text-color: #f8f8f2;
+    background-color: @bg-alt;
+    children: [ prompt, entry ];
 }
 
 prompt {
-    text-color: #ff79c6;
-    padding: 5px;
+    text-color: @accent;
+}
+
+entry {
+    placeholder: "Buscar…";
+    placeholder-color: @fg-dim;
+    cursor: text;
 }
 
 message {
-    text-color: #bd93f9;
-    padding: 5px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background-color: @bg-alt;
 }
-@theme "/usr/share/rofi/themes/Arc-Dark.rasi"
+
+textbox {
+    text-color: @pink;
+}
+
+listview {
+    lines: 8;
+    columns: 1;
+    fixed-height: true;
+    scrollbar: false;
+    spacing: 4px;
+}
+
+element {
+    padding: 8px 12px;
+    spacing: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+element normal.urgent,
+element alternate.urgent {
+    text-color: @urgent;
+}
+
+element normal.active,
+element alternate.active {
+    text-color: @pink;
+}
+
+element selected.normal,
+element selected.active {
+    background-color: @bg-alt;
+    text-color: @accent;
+}
+
+element selected.urgent {
+    background-color: @urgent;
+    text-color: #1e1e2e;
+}
+
+element-icon {
+    size: 24px;
+    vertical-align: 0.5;
+}
+
+element-text {
+    text-color: inherit;
+    vertical-align: 0.5;
+}

@@ -1,31 +1,30 @@
 #!/bin/bash
 
-# Obtener el estado de la batería BAT0
-battery0_info=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0)
-battery0_percentage=$(echo "$battery0_info" | grep "percentage:" | awk '{print $2}' | tr -d '%')
-battery0_status=$(echo "$battery0_info" | grep "state:" | awk '{print $2}')
+# Extraer la temperatura y tomar solo la parte entera del número para evitar parpadeos
+raw_temp=$(sensors 2>/dev/null | grep -E 'Package id 0|Core 0|Tctl|temp1' | grep -oE '\+[0-9]+' | head -n1 | tr -d '+')
 
-# Obtener el estado de la batería BAT1
-battery1_info=$(upower -i /org/freedesktop/UPower/devices/battery_BAT1)
-battery1_percentage=$(echo "$battery1_info" | grep "percentage:" | awk '{print $2}' | tr -d '%')
-battery1_status=$(echo "$battery1_info" | grep "state:" | awk '{print $2}')
-
-# Calcular el porcentaje combinado (promedio simple)
-combined_percentage=$(echo "($battery0_percentage + $battery1_percentage) / 2" | bc)
-
-# Determinar el icono según el porcentaje combinado y el estado de carga
-if [[ "$battery0_status" == "charging" || "$battery1_status" == "charging" ]]; then
-    # Si alguna batería está cargando
-    icon=""  # Icono de carga
-elif [ "$combined_percentage" -ge 90 ]; then
-    icon=""  # Batería llena
-elif [ "$combined_percentage" -ge 60 ]; then
-    icon=""  # Batería en buen estado
-elif [ "$combined_percentage" -ge 30 ]; then
-    icon=""  # Batería baja
-else
-    icon=""  # Batería muy baja
+# Si sensors no devuelve datos, consultar sysfs
+if [ -z "$raw_temp" ]; then
+    sys_temp=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
+    if [ -n "$sys_temp" ]; then
+        raw_temp=$((sys_temp / 1000))
+    fi
 fi
 
-# Mostrar el icono y el porcentaje combinado
-echo "$icon $combined_percentage%"
+# Si no hay lectura, mostrar N/A
+if [ -z "$raw_temp" ]; then
+    echo "CPU: N/A"
+    exit 0
+fi
+
+# Asignar un indicador de texto o símbolo compatible
+if [ "$raw_temp" -ge 80 ]; (
+    status="[HOT]"
+elif [ "$raw_temp" -ge 60 ]; then
+    status="[MID]"
+else
+    status="[OK]"
+fi
+
+# Salida limpia en números enteros (Ejemplo: CPU: 40°C)
+echo "CPU: ${raw_temp}°C"

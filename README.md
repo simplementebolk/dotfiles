@@ -28,6 +28,22 @@ Desktop Preview<img width="3840" height="1080" alt="2026-08-12-212331" src="http
 | **Lanzador de Apps** | `rofi` |
 | **Terminal** | `alacritty` |
 | **Compositor Visual** | `picom` |
+| **Fondo de pantalla** | `nitrogen` |
+| **Capturas** | `ksnip` |
+
+---
+
+## 🎨 Tema
+
+Todo el entorno usa la paleta **[Catppuccin Mocha](https://catppuccin.com/palette)**:
+
+* **Polybar** flotante y translúcida, alineada con los *gaps* de las ventanas, con iconos de colores por módulo.
+* **Rofi** con tema Catppuccin propio (también lo usan los menús de wifi, bluetooth y audio).
+* **picom** con desenfoque `dual_kawase`, esquinas redondeadas, sombras suaves y animaciones de aparición.
+* **bspwm** con borde malva (`#cba6f7`) en la ventana activa.
+* **GTK** en modo oscuro (`Adwaita-dark`).
+
+**Fuentes necesarias:** `FiraCode Nerd Font`, `MesloLGS Nerd Font` y `Noto Sans CJK` (para los escritorios 一 二 三…).
 
 ---
 
@@ -49,7 +65,10 @@ sudo apt update && sudo apt install -y \
   scrot \
   brightnessctl \
   pulsemixer \
-  alsa-utils
+  alsa-utils \
+  nitrogen \
+  ksnip \
+  fonts-noto-cjk
 ```
 
 ### 2. Clonar el repositorio
@@ -59,12 +78,16 @@ git clone https://github.com/simplementebolk/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ```
 ### 3. Copiar configuraciones y asignar permisos
-Ejecuta este comando para copiar todas las carpetas a tu directorio ~/.config/ y asignar los permisos necesarios:
+Ejecuta estos comandos para copiar todas las carpetas a tu directorio `~/.config/` y asignar los permisos necesarios:
 
-    # Crear la carpeta .config si no existe y copiar los archivos
-    mkdir -p ~/.config && cp -r alacritty bspwm picom polybar rofi sxhkd ~/.config/
-# Dar permisos de ejecución a los scripts de inicio
-chmod +x ~/.config/bspwm/bspwmrc ~/.config/sxhkd/sxhkdrc
+```bash
+# Crear la carpeta .config si no existe y copiar los archivos
+mkdir -p ~/.config && cp -r alacritty bspwm gtk-3.0 picom polybar rofi sxhkd ~/.config/
+
+# Dar permisos de ejecución a los scripts
+chmod +x ~/.config/bspwm/bspwmrc ~/.config/sxhkd/sxhkdrc ~/.config/polybar/launch.sh \
+  ~/.config/bspwm/scripts/*.sh ~/.config/polybar/scripts/*.sh
+```
 
 ### 4. ⌨️ Atajos de Teclado (`sxhkd`)
 
@@ -96,5 +119,5 @@ chmod +x ~/.config/bspwm/bspwmrc ~/.config/sxhkd/sxhkdrc
 * `F2` / `F3` ➔ Bajar / Subir volumen (-10% / +10%)
 * `F4` ➔ Silenciar / Activar micrófono
 * `F5` / `F6` ➔ Bajar / Subir brillo de pantalla (-5% / +5%)
-* `Print` ➔ Captura de pantalla completa (Guarda en `~/Pictures/`)
-* `Shift + Print` ➔ Captura de pantalla de región seleccionada
+* `Print` ➔ Captura del monitor activo (**ksnip**)
+* `Shift + Print` ➔ Captura de una región seleccionada (**ksnip**)
