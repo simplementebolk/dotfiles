@@ -1,0 +1,50 @@
+/* Menú de energía: se abre bajo el logo de Debian en Polybar */
+@import "config.rasi"
+
+configuration {
+    show-icons: false;
+}
+
+window {
+    location: north west;
+    anchor:   north west;
+    x-offset: 12px;
+    y-offset: 54px;
+    width:    320px;
+    border-radius: 12px;
+}
+
+mainbox {
+    padding: 14px;
+    spacing: 10px;
+    children: [ message, listview ];
+}
+
+message {
+    padding: 10px 14px;
+    border-radius: 10px;
+    background-color: @bg-alt;
+}
+
+textbox {
+    text-color: @fg;
+    markup: true;
+}
+
+listview {
+    fixed-height: true;
+    spacing: 2px;
+}
+
+element {
+    padding: 10px 12px;
+}
+
+element selected.normal {
+    background-color: @surface;
+    text-color: @fg;
+}
+
+element-text {
+    markup: true;
+}

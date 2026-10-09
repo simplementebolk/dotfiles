@@ -181,35 +181,28 @@ toggle_trust() {
 
 # Prints a short string with the current bluetooth status
 # Useful for status bars like polybar, etc.
+# Una sola consulta por estado (sin bc) y colores Catppuccin.
 print_status() {
-    if power_on; then
-        printf ''
+    local show icon=$'\uf294' names
+    show=$(bluetoothctl show 2>/dev/null)
 
-        paired_devices_cmd="devices Paired"
-        # Check if an outdated version of bluetoothctl is used to preserve backwards compatibility
-        if (( $(echo "$(bluetoothctl version | cut -d ' ' -f 2) < 5.65" | bc -l) )); then
-            paired_devices_cmd="paired-devices"
-        fi
+    # Sin controlador bluetooth: no mostrar nada
+    if [ -z "$show" ] || [[ $show == *"No default controller"* ]]; then
+        echo ""
+        return
+    fi
 
-        mapfile -t paired_devices < <(bluetoothctl $paired_devices_cmd | grep Device | cut -d ' ' -f 2)
-        counter=0
+    if ! grep -q "Powered: yes" <<< "$show"; then
+        echo "%{F#45475a}$icon%{F-}"
+        return
+    fi
 
-        for device in "${paired_devices[@]}"; do
-            if device_connected "$device"; then
-                device_alias=$(bluetoothctl info "$device" | grep "Alias" | cut -d ' ' -f 2-)
-
-                if [ $counter -gt 0 ]; then
-                    printf ", %s" "$device_alias"
-                else
-                    printf " %s" "$device_alias"
-                fi
-
-                ((counter++))
-            fi
-        done
-        printf "\n"
+    # bluetoothctl >= 5.65 permite listar solo los conectados
+    names=$(bluetoothctl devices Connected 2>/dev/null | cut -d ' ' -f 3- | paste -sd ',' | sed 's/,/, /g')
+    if [ -n "$names" ]; then
+        echo "%{F#e5484d}$icon%{F-} $names"
     else
-        echo ""
+        echo "%{F#a6adc8}$icon%{F-}"
     fi
 }
 

@@ -2,9 +2,29 @@
 # wm independent hotkeys
 #
 
-# lockscreen
-super + l
-	betterlockscreen -l
+# Bloquear pantalla (Super+l queda solo para mover el foco a la derecha)
+super + x
+	~/.config/bspwm/scripts/lock.sh
+
+# Menú de energía: bloquear, cerrar sesión, reiniciar, apagar
+super + shift + e
+	~/.config/bspwm/scripts/powermenu.sh
+
+# Historial del portapapeles
+super + v
+	~/.config/bspwm/scripts/clipboard.sh
+
+# Selector de emojis
+super + e
+	~/.config/bspwm/scripts/emoji.sh
+
+# Menú de capturas de pantalla
+super + shift + s
+	~/.config/bspwm/scripts/screenshot.sh
+
+# Selector de fondos (con acento automático)
+super + shift + b
+	~/.config/bspwm/scripts/wallpaper.sh
 
 # terminal emulator
 super + Return

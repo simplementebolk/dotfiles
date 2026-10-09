@@ -1,38 +1,59 @@
 #!/usr/bin/env bash
+# Menú wifi con Rofi usando NetworkManager (nmcli).
 
-notify-send "Getting list of available Wi-Fi networks..."
-# Get a list of available wifi connections and morph it into a nice-looking list
-wifi_list=$(nmcli --fields "SECURITY,SSID" device wifi list | sed 1d | sed 's/  */ /g' | sed -E "s/WPA*.?\S/ /g" | sed "s/^--/ /g" | sed "s/  //g" | sed "/--/d")
+lock=$'\U000F033E'     # 󰌾 red protegida
+open=$'\U000F0FC6'     # 󰿆 red abierta
+on=$'\U000F05A9'       # 󰖩
+off=$'\U000F05AA'      # 󰖪
 
-connected=$(nmcli -fields WIFI g)
-if [[ "$connected" =~ "enabled" ]]; then
-	toggle="󰖪  Disable Wi-Fi"
-elif [[ "$connected" =~ "disabled" ]]; then
-	toggle="󰖩  Enable Wi-Fi"
+notify() { command -v notify-send >/dev/null && notify-send -a Wi-Fi -i network-wireless "$@"; }
+
+if [ "$(nmcli radio wifi)" = "enabled" ]; then
+    toggle="$off  Desactivar Wi-Fi"
+    # IN-USE:SECURITY:SIGNAL:SSID (el SSID al final porque puede contener ":")
+    # Ordenadas por señal, sin SSID repetidos ni redes ocultas
+    networks=$(nmcli -t -e no -f IN-USE,SECURITY,SIGNAL,SSID device wifi list --rescan auto |
+        sort -t: -k3,3nr | awk -F: '{ ssid = $0; sub(/^([^:]*:){3}/, "", ssid) }
+            ssid != "" && !seen[ssid]++ { print $1 ":" $2 ":" $3 ":" ssid }')
+else
+    toggle="$on  Activar Wi-Fi"
+    networks=""
 fi
 
-# Use rofi to select wifi network
-chosen_network=$(echo -e "$toggle\n$wifi_list" | uniq -u | rofi -dmenu -i -selected-row 1 -p "Wi-Fi SSID: " )
-# Get name of connection
-read -r chosen_id <<< "${chosen_network:3}"
+# Línea visible: "󰌾  MiRed (78%) ✓"
+menu=$(while IFS=: read -r inuse security signal ssid; do
+    [ -z "$ssid" ] && continue
+    icon=$open; [ -n "$security" ] && icon=$lock
+    mark=""; [ "$inuse" = "*" ] && mark=" ✓"
+    printf '%s  %s (%s%%)%s\n' "$icon" "$ssid" "$signal" "$mark"
+done <<< "$networks")
 
-if [ "$chosen_network" = "" ]; then
-	exit
-elif [ "$chosen_network" = "󰖩  Enable Wi-Fi" ]; then
-	nmcli radio wifi on
-elif [ "$chosen_network" = "󰖪  Disable Wi-Fi" ]; then
-	nmcli radio wifi off
+chosen=$(printf '%s\n%s' "$toggle" "$menu" | sed '/^$/d' |
+    rofi -dmenu -i -format i -selected-row 1 -p "  Wi-Fi")
+[ -z "$chosen" ] && exit 0
+
+if [ "$chosen" = 0 ]; then
+    if [[ $toggle == *Desactivar* ]]; then nmcli radio wifi off; else nmcli radio wifi on; fi
+    exit 0
+fi
+
+line=$(sed -n "${chosen}p" <<< "$networks")
+security=$(cut -d: -f2 <<< "$line")
+ssid=$(cut -d: -f4- <<< "$line")
+
+# Si ya existe una conexión guardada con ese nombre, solo se activa
+if nmcli -g NAME connection show | grep -Fxq "$ssid"; then
+    result=$(nmcli connection up id "$ssid" 2>&1)
+elif [ -n "$security" ]; then
+    password=$(rofi -dmenu -password -p "  Contraseña de $ssid")
+    [ -z "$password" ] && exit 0
+    result=$(nmcli device wifi connect "$ssid" password "$password" 2>&1)
 else
-	# Message to show when connection is activated successfully
-  	success_message="You are now connected to the Wi-Fi network \"$chosen_id\"."
-	# Get saved connections
-	saved_connections=$(nmcli -g NAME connection)
-	if [[ $(echo "$saved_connections" | grep -w "$chosen_id") = "$chosen_id" ]]; then
-		nmcli connection up id "$chosen_id" | grep "successfully" && notify-send "Connection Established" "$success_message"
-	else
-		if [[ "$chosen_network" =~ "" ]]; then
-			wifi_password=$(rofi -dmenu -p "Password: " )
-		fi
-		nmcli device wifi connect "$chosen_id" password "$wifi_password" | grep "successfully" && notify-send "Connection Established" "$success_message"
-    fi
+    result=$(nmcli device wifi connect "$ssid" 2>&1)
+fi
+
+if [[ $result == *successfully* ]]; then
+    notify "Conectado" "Ahora estás conectado a \"$ssid\"."
+else
+    notify -u critical "No se pudo conectar" "$result"
 fi

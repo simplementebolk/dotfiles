@@ -1,0 +1,57 @@
+/* Panel de audio: se abre bajo el icono de volumen de Polybar */
+@import "config.rasi"
+
+configuration {
+    show-icons: false;
+}
+
+window {
+    location: north east;
+    anchor:   north east;
+    x-offset: -12px;
+    y-offset: 54px;
+    width:    460px;
+    border-radius: 12px;
+}
+
+mainbox {
+    padding: 14px;
+    spacing: 10px;
+    children: [ message, listview ];
+}
+
+message {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background-color: @bg-alt;
+}
+
+textbox {
+    text-color: @fg;
+    markup: true;
+}
+
+listview {
+    fixed-height: true;
+    spacing: 2px;
+}
+
+element {
+    padding: 9px 12px;
+}
+
+element normal.active,
+element alternate.active {
+    background-color: #31324488;
+    text-color: @fg;
+}
+
+element selected.normal,
+element selected.active {
+    background-color: @surface;
+    text-color: @fg;
+}
+
+element-text {
+    markup: true;
+}

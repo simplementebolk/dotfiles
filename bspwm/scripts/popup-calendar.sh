@@ -1,41 +1,35 @@
 #!/bin/sh
+# Calendario flotante (yad) bajo Polybar, centrado en el ratón.
+# Un segundo clic lo cierra.
 
-BAR_HEIGHT=40  # polybar height
-BORDER_SIZE=0  # border size from your wm settings
-YAD_WIDTH=222  # 222 is minimum possible value
-YAD_HEIGHT=193 # 193 is minimum possible value
-DATE=" $(date +"%A, %B %e")"
+BAR_HEIGHT=50  # alto de polybar + offset-y + margen
+YAD_WIDTH=222  # 222 es el mínimo posible
+YAD_HEIGHT=193 # 193 es el mínimo posible
+MARGIN=12      # igual que window_gap de bspwm
 
 case "$1" in
 --popup)
-    if [ "$(xdotool getwindowfocus getwindowname)" = "yad-calendar" ]; then
+    # Si ya está abierto, cerrarlo
+    if pkill -f '^yad --calendar'; then
         exit 0
     fi
 
     eval "$(xdotool getmouselocation --shell)"
-    eval "$(xdotool getdisplaygeometry --shell)"
 
-    # X
-    if [ "$((X + YAD_WIDTH / 2 + BORDER_SIZE))" -gt "$WIDTH" ]; then #Right side
-        : $((pos_x = WIDTH - YAD_WIDTH - BORDER_SIZE))
-    elif [ "$((X - YAD_WIDTH / 2 - BORDER_SIZE))" -lt 0 ]; then #Left side
-        : $((pos_x = BORDER_SIZE))
-    else #Center
-        : $((pos_x = X - YAD_WIDTH / 2))
-    fi
+    # Geometría del monitor bajo el ratón
+    eval "$(bspc query -T -m pointed | jq -r '.rectangle | "MX=\(.x) MY=\(.y) MW=\(.width) MH=\(.height)"')"
 
-    # Y
-    if [ "$Y" -gt "$((HEIGHT / 2))" ]; then #Bottom
-        : $((pos_y = HEIGHT - YAD_HEIGHT - BAR_HEIGHT - BORDER_SIZE))
-    else #Top
-        : $((pos_y = BAR_HEIGHT + BORDER_SIZE))
-    fi
+    # Centrar en el ratón sin salir del monitor
+    pos_x=$((X - YAD_WIDTH / 2))
+    [ "$pos_x" -lt "$((MX + MARGIN))" ] && pos_x=$((MX + MARGIN))
+    [ "$((pos_x + YAD_WIDTH))" -gt "$((MX + MW - MARGIN))" ] && pos_x=$((MX + MW - MARGIN - YAD_WIDTH))
+    pos_y=$((MY + BAR_HEIGHT))
 
     yad --calendar --undecorated --fixed --close-on-unfocus --no-buttons \
         --width=$YAD_WIDTH --height=$YAD_HEIGHT --posx=$pos_x --posy=$pos_y \
-        --title="yad-calendar" --borders=0 >/dev/null &
+        --title="yad-calendar" --class="yad-calendar" --borders=8 >/dev/null &
     ;;
 *)
-    echo "$DATE"
+    date +" %A, %e de %B"
     ;;
 esac

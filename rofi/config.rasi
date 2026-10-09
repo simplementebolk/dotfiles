@@ -11,14 +11,37 @@ configuration {
 
 /* ── Catppuccin Mocha ───────────────────────────── */
 * {
-    bg:       #1e1e2ef0;
+    bg:       #181825f0;
     bg-alt:   #313244;
     surface:  #45475a;
     fg:       #cdd6f4;
     fg-dim:   #6c7086;
-    accent:   #cba6f7;
-    pink:     #f5c2e7;
-    urgent:   #f38ba8;
+    accent:   #e5484d;
+    pink:     #f0b44c;
+    urgent:   #fab387;
+
+    /* Variables del tema por defecto de Rofi (que es claro): se redefinen
+       todas para que ninguna fila use sus colores */
+    normal-background:            transparent;
+    normal-foreground:            @fg;
+    alternate-normal-background:  transparent;
+    alternate-normal-foreground:  @fg;
+    active-background:            transparent;
+    active-foreground:            @pink;
+    alternate-active-background:  transparent;
+    alternate-active-foreground:  @pink;
+    urgent-background:            transparent;
+    urgent-foreground:            @urgent;
+    alternate-urgent-background:  transparent;
+    alternate-urgent-foreground:  @urgent;
+    selected-normal-background:   @bg-alt;
+    selected-normal-foreground:   @accent;
+    selected-active-background:   @bg-alt;
+    selected-active-foreground:   @accent;
+    selected-urgent-background:   @urgent;
+    selected-urgent-foreground:   #181825;
+    border-color:                 @accent;
+    separatorcolor:               transparent;
 
     background-color: transparent;
     text-color:       @fg;
@@ -70,11 +93,18 @@ textbox {
 }
 
 listview {
+    border: 0;
     lines: 8;
     columns: 1;
     fixed-height: true;
     scrollbar: false;
     spacing: 4px;
+}
+
+element normal.normal,
+element alternate.normal {
+    background-color: transparent;
+    text-color: @fg;
 }
 
 element {

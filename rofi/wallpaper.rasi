@@ -1,0 +1,54 @@
+/* Selector de fondos: cuadrícula de miniaturas */
+@import "config.rasi"
+
+configuration {
+    show-icons: true;
+}
+
+window {
+    width: 1180px;
+    border-radius: 14px;
+}
+
+mainbox {
+    padding: 18px;
+    spacing: 14px;
+    children: [ inputbar, listview ];
+}
+
+listview {
+    columns: 4;
+    lines: 3;
+    spacing: 12px;
+    flow: horizontal;
+    fixed-columns: true;
+}
+
+element {
+    orientation: vertical;
+    padding: 8px;
+    spacing: 8px;
+    border-radius: 10px;
+}
+
+element selected.normal,
+element selected.active {
+    background-color: @accent;
+    text-color: #181825;
+}
+
+element normal.active,
+element alternate.active {
+    background-color: @bg-alt;
+    text-color: @pink;
+}
+
+element-icon {
+    size: 240px;
+    horizontal-align: 0.5;
+}
+
+element-text {
+    horizontal-align: 0.5;
+    font: "FiraCode Nerd Font 10";
+}
